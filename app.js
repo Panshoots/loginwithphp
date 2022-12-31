@@ -9,7 +9,30 @@ const firebaseConfig = {
   measurementId: "G-5TW7RLERYC",
 };
 
-var usuario = "";
+var formulario = document.getElementById('form-signup');
+
+formulario.addEventListener('submit', function(e){
+    e.preventDefault();
+    var datos = new FormData(formulario);
+    
+    fetch('validar.php',{
+        method: 'POST',
+        body: datos
+    })
+        .then( res => res.json())
+        .then( data => {
+            //console.log(data)
+            if (data === 'Verificado') {
+              mensajeTime("info", "Verificado", "Captcha Correcto!", 2000);
+              registrar();
+            } else if (data === 'No Verificado') { 
+                //${data}
+              mensaje("error", "Error!", "No Verificado!");
+            } else {
+              mensaje("error", "Error!", "Complete el Captcha!");
+            }
+        } )
+});
 
 function registrar() {
   var email = document.getElementById("txtCorreo").value;
@@ -57,7 +80,7 @@ function acceder() {
     .then(() => {
         mensajeTime("info", "Acceso", "Entrando al sistema..", 2000);
         // OPCION 1: 
-        setTimeout( function() { window.location.href = "http://localhost:80/login3/home.php"; }, 2000 );
+        setTimeout( function() { window.location.href = "http://localhost:80/proyectos/logins/login3/home.php"; }, 2000 );
     })
     .catch(function (error) {
       const errorCode = error.code;
@@ -68,7 +91,7 @@ function acceder() {
     });
 }
 
-function observador() {
+async function observador() {
   firebase.initializeApp(firebaseConfig);
   firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
@@ -93,7 +116,7 @@ observador();
 function cerrar() {
   firebase.auth().signOut()
     .then(function () {
-        window.location.href = "http://localhost:80/login3/";
+        window.location.href = "http://localhost:80/proyectos/logins/login3/";
     })
     .catch(function () {
 
