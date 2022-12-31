@@ -1,3 +1,30 @@
+<?php
+
+  if(!empty($_POST)) {
+    $correo = $_POST['txtCorreoLogin'];
+    $pass = $_POST['txtPassLogin'];
+    $captcha = $_POST['g-recaptcha-response'];
+
+    $secret = '6Le1Nb8jAAAAADr7Lmp9OL24eUxI2GVKzx5XaRfg';
+
+    if(!$captcha) {
+      echo "VALIDAR CAPTCHA";
+    }
+
+    $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$captcha");
+    //var_dump($response);
+    $arr = json_decode($response, TRUE);
+    //var_dump($arr);
+    
+    if($arr['success']) {
+      echo 'Verificado';
+    } else {
+      echo 'No Verificado';
+    }
+  }
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +35,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css">
     <script src="https://www.gstatic.com/firebasejs/4.7.0/firebase.js"></script>
-
+    <script src="https://www.google.com/recaptcha/api.js"></script>
 </head>
 <body>
 
@@ -24,11 +51,14 @@
               </ul>
               <div class="tab-content" id="pills-tabContent">
                 <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">                  
-                  <div class="form px-4 pt-5">
-                  <h3 class="text-center mb-3">Ingreso al Sistema</h3>
+                  <div class="form px-4">
+                  <form action="<?php $_SERVER['PHP_SELF']; ?>" id="form-login" method="POST">
+                    <h3 class="text-center mb-3">Ingreso al Sistema</h3>
                     <input type="text"  name="txtCorreoLogin" id="txtCorreoLogin" class="form-control" placeholder="Email or Phone">
                     <input type="password" name="txtPassLogin" id="txtPassLogin" class="form-control" placeholder="Password">
-                    <button class="btn btn-dark btn-block"onclick="acceder()">Acceder</button>
+                    <div class="g-recaptcha" data-sitekey="6Le1Nb8jAAAAAAB4FTGQalv57AmR67CTHvtiacpS"></div>
+                    <button class="btn btn-dark btn-block" id="btnAcceder">Acceder</button>
+                    </form>
                   </div>
                 </div>
                 <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">              
@@ -41,10 +71,12 @@
                 </div>                
                </div>
         </div>
-      </div>
+      </div> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    
     <script src="app.js"></script>
-</body>
+  </body>
 </html>
